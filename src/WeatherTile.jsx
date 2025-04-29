@@ -24,9 +24,9 @@ function WeatherTile () {
                 
                 <div class="weather-tile-container">
                     <div class="weather-tile">
-                        <h2>Temperature</h2>
-                        <h4><img src={weatherData.current.condition.icon}/></h4>
-                        <h4>{weatherData.current.temp_f}°F</h4>
+                        <h2 class="weather-tile-title">Temperature</h2>
+                        <h4 class="weather-tile-icon"><img src={weatherData.current.condition.icon}/></h4>
+                        <h4 class="weather-tile-temp">{weatherData.current.temp_f}°F</h4>
                     </div>
                 </div>
 

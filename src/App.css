@@ -1,10 +1,9 @@
 #root {
   max-width: 800px;
   max-height: 460px;
-  margin: 0 auto;
+  margin: 0;
   padding: 2rem;
   text-align: center;
-  display: grid;
 }
 
 body {
@@ -17,15 +16,39 @@ h2 {
 
 .weather-tile-container {
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  margin: 0;
 }
 
 .weather-tile {
+  position: absolute;
+  padding: 0;
+  margin-top: 0;
   border-radius: 16px;
-  height: 6rem;
+  height: 7rem;
   width: 15rem;
   background-color: #FFF9FB;
-  right: 0;
+  right: 1rem;
+  bottom: 1rem;
+}
+
+.weather-tile-title {
+  margin: 0;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.weather-tile-icon {
+  margin: 0;
+  position: absolute;
   bottom: 0;
+}
+
+.weather-tile-temp {
+  position: absolute;
+  margin: 0;
+  bottom: 0;
+  left: 50%;
+
+
 }
