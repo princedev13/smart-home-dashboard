@@ -1,13 +1,15 @@
 #root {
-  max-width: 800px;
-  max-height: 460px;
+  width: 800px;
+  height: 480px;
   margin: 0;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
 }
 
 body {
-  background-color: #C1DFF0;
+  background-color: #c1dff0;
+  width: 800px;
+  height: 460px;
 }
 
 h2 {
@@ -18,9 +20,11 @@ h4 {
   font-family: "Cal Sans";
 }
 
-.weather-tile-container {
-  display: flex;
-  margin: 0;
+.dashboard-wrapper {
+  position: relative;
+  width: 800px;
+  height: 480px;
+  background-color: #c1dff0;
 }
 
 .weather-tile {
@@ -30,7 +34,7 @@ h4 {
   border-radius: 16px;
   height: 7rem;
   width: 15rem;
-  background-color: #FFF9FB;
+  background-color: #fff9fb;
   right: 1rem;
   bottom: 1rem;
 }
@@ -54,5 +58,28 @@ h4 {
   font-size: 30px;
   bottom: 28px;
   left: 50%;
+}
 
+.news-tile {
+  position: absolute;
+  padding: 0;
+  height: 12rem;
+  width: 20rem;
+  margin-top: 0;
+  border-radius: 16px;
+  background-color: #fff9fb;
+  left: 1rem;
+  bottom: 1rem;
+}
+
+.speaker-tile {
+  position: absolute;
+  padding: 0;
+  height: 12rem;
+  width: 20rem;
+  margin-top: 0;
+  border-radius: 16px;
+  background-color: #fff9fb;
+  left: 2rem;
+  bottom: 3rem;
 }
