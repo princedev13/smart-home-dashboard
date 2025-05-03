@@ -60,7 +60,7 @@ h4 {
   left: 50%;
 }
 
-.news-tile {
+.news-tile-container {
   position: absolute;
   padding: 0;
   height: 12rem;
@@ -72,14 +72,17 @@ h4 {
   bottom: 1rem;
 }
 
+.news-title {
+}
+
 .speaker-tile {
   position: absolute;
   padding: 0;
-  height: 12rem;
+  height: 6rem;
   width: 20rem;
   margin-top: 0;
   border-radius: 16px;
   background-color: #fff9fb;
-  left: 2rem;
-  bottom: 3rem;
+  left: 1rem;
+  top: 10rem;
 }

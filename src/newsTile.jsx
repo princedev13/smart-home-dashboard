@@ -18,21 +18,39 @@ function NewsTile() {
         console.error("error fetching news data");
       }, []);
   });
+
 */
   return (
     <>
       <div className="news-tile-container">
-        <div className="news-tile"></div>
+        <div className="news-title">
+          <h2>News</h2>
+        </div>
         <div className="news-article-container">
-          <div className="news-article-1">
-            <div className="source"></div>
+          <div className="news-img">
+            <img src="" />
           </div>
-          <div className="news-article-1">
-            <div className="source"></div>
+          <div className="news-headline">headline</div>
+          <div className="news-article-desc">descriptiondescription</div>
+          <div className="news-source">source</div>
+        </div>
+
+        <div className="news-article-container">
+          <div className="news-img">
+            <img src="" />
           </div>
-          <div className="news-article-1">
-            <div className="source"></div>
+          <div className="news-headline">headline</div>
+          <div className="news-article-desc">descriptiondescription</div>
+          <div className="news-source">source</div>
+        </div>
+
+        <div className="news-article-container">
+          <div className="news-img">
+            <img src="" />
           </div>
+          <div className="news-headline">headline</div>
+          <div className="news-article-desc">descriptiondescription</div>
+          <div className="news-source">source</div>
         </div>
       </div>
     </>
