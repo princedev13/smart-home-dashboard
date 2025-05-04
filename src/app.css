@@ -33,7 +33,7 @@ h4 {
   margin-top: 0;
   border-radius: 16px;
   height: 7rem;
-  width: 15rem;
+  width: 13.5rem;
   background-color: #fff9fb;
   right: 1rem;
   bottom: 1rem;
@@ -64,7 +64,7 @@ h4 {
   position: absolute;
   padding: 0;
   height: 12rem;
-  width: 20rem;
+  width: 22rem;
   margin-top: 0;
   border-radius: 16px;
   background-color: #fff9fb;
@@ -79,10 +79,42 @@ h4 {
   position: absolute;
   padding: 0;
   height: 6rem;
-  width: 20rem;
+  width: 22rem;
   margin-top: 0;
   border-radius: 16px;
   background-color: #fff9fb;
   left: 1rem;
   top: 10rem;
+}
+
+.tempsensor {
+  position: absolute;
+  padding: 0;
+  margin-top: 0;
+  border-radius: 16px;
+  height: 7rem;
+  width: 10rem;
+  background-color: #fff9fb;
+  right: 15.5rem;
+  bottom: 1rem;
+}
+
+.calendar-tile {
+  position: absolute;
+  padding: 0;
+  height: 15rem;
+  width: 24rem;
+  margin-top: 0;
+  border-radius: 16px;
+  background-color: #fff9fb;
+  right: 1rem;
+  top: 6rem;
+}
+
+.date-time-tile {
+  left: 1rem;
+}
+
+.time {
+  left: 1rem;
 }
