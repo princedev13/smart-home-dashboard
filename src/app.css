@@ -73,6 +73,17 @@ h4 {
 }
 
 .news-title {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  left: 9rem;
+  top: -1rem;
+  height: 2rem;
+}
+
+.news-article-container {
+  position: absolute;
+  height: 18rem; 
 }
 
 .speaker-tile {
@@ -102,19 +113,42 @@ h4 {
 .calendar-tile {
   position: absolute;
   padding: 0;
-  height: 15rem;
+  height: 17rem;
   width: 24rem;
   margin-top: 0;
   border-radius: 16px;
   background-color: #fff9fb;
   right: 1rem;
-  top: 6rem;
+  top: 4rem;
 }
 
 .date-time-tile {
+  position: absolute;
+  padding: 0;
+  height: 15rem;
+  width: 24rem;
+  margin-top: 0;
+  border-radius: 16px;
   left: 1rem;
+  top: 1rem;
 }
 
 .time {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  font-size: 3rem;
+  width: 18rem;
+  top: 2.5rem;
   left: 1rem;
+}
+
+.date {
+  position: absolute;
+  font-size: 2rem;
+  width: 8rem;
+  left: 1.3rem;
+  top: 4.8rem;
+  margin: 0;
+  padding: 0;
 }
