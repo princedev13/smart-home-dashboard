@@ -13,10 +13,12 @@ body {
 }
 
 h2 {
+  color: black;
   font-family: "Barlow";
 }
 
 h4 {
+  color: black;
   font-family: "Cal Sans";
 }
 
@@ -152,3 +154,14 @@ h4 {
   margin: 0;
   padding: 0;
 }
+
+.news-img {
+  position: absolute;
+  height: 15rem;
+  width: auto;
+  bottom: 1rem;
+  left: 1rem;
+
+
+}
+

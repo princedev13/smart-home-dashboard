@@ -4,7 +4,8 @@ const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_SECRET;
 function NewsTile() {
   const [newsData, setNewsData] = useState(null);
 
-  /* useEffect(() => {
+  /*
+  useEffect(() => {
     fetch(
       "https://api.thenewsapi.com/v1/news/top?" +
         NEWS_API_KEY +
@@ -16,17 +17,15 @@ function NewsTile() {
       })
       .catch((error) => {
         console.error("error fetching news data");
-      }, []); 
-
+      }, []);
   });
 
-    function setArticleData (newsData) {
-      newsData.data
-    
-    }
-
+  function setArticleData(newsData) {
+    newsData.data;
+  }
 */
-  eturn(
+
+  return (
     <>
       <div className="news-tile-container">
         <div className="news-title">
@@ -35,9 +34,9 @@ function NewsTile() {
 
         {newsData?.data?.map((article, index) => (
           <div className="news-article-container" key={article.uuid}>
-            <div className={`news-article ${index}`}>
+            <div className={`news-article${index}`}>
               <div className="news-img">
-                <img src={article.image_url} alt="news" />
+                <img src={article.image_url} />
               </div>
               <div className="news-headline">{article.title}</div>
               <div className="news-article-desc">{article.description}</div>
