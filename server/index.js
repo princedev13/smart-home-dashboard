@@ -10,9 +10,14 @@ const app = express();
 app.use(cors());
 
 const SCOPES = [
-  "https://www.googleapi.com/auth/calendar.readonly",
-  "https://www.googleapi.com/auth/calendar.events",
+  "https://www.googleapis.com/auth/calendar.readonly",
+  "https://www.googleapis.com/auth/calendar.events",
 ];
+
+app
+  .listen(3002, () => {
+    console.log("Server listening on port 3002");
+  })
 
 //gets path of token and credentials
 const TOKEN_PATH = path.join(process.cwd(), "token.json");
@@ -94,13 +99,3 @@ app.get("/api/calendar", async (req, res) => {
   }
 });
 
-app
-  .listen(8080, () => {
-    console.log("Server listening on port 8080");
-  })
-  .on("error", (err) => {
-    if (err.code === "EADDRINUSE") {
-      console.error("Port 8080 is already in use");
-      process.exit(1);
-    }
-  });

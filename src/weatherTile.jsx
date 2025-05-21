@@ -16,8 +16,8 @@ function WeatherTile() {
       })
       .catch((error) => {
         console.error("error fetching weather data", error);
-      }, []);
-  });
+      });
+  }, []);
 
   return (
     <div>
