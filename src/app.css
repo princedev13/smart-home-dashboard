@@ -51,15 +51,16 @@ h4 {
 .weather-tile-icon {
   margin: 0;
   position: absolute;
-  bottom: 0;
+  bottom: 7px;
+  left: 1rem;
 }
 
 .weather-tile-temp {
   position: absolute;
   margin: 0;
   font-size: 30px;
-  bottom: 28px;
-  left: 50%;
+  bottom: 20px;
+  left: 5.8rem;
 }
 
 .news-tile-container {
@@ -112,17 +113,7 @@ h4 {
   bottom: 1rem;
 }
 
-.calendar-tile {
-  position: absolute;
-  padding: 0;
-  height: 17rem;
-  width: 24rem;
-  margin-top: 0;
-  border-radius: 16px;
-  background-color: #fff9fb;
-  right: 1rem;
-  top: 4rem;
-}
+
 
 .date-time-tile {
   position: absolute;
@@ -165,3 +156,114 @@ h4 {
 
 }
 
+.calendar-tile {
+  position: absolute;
+  padding: 0;
+  height: 17rem;
+  width: 24rem;
+  margin-top: 0;
+  border-radius: 16px;
+  background-color: #fff9fb;
+  right: 1rem;
+  top: 4rem;
+}
+
+.calendar-weekday-box {
+  position: absolute;
+  display: flex;
+  left: .28rem;
+  flex-direction: row;
+  color: black;
+  top: .8rem
+}
+
+.calendar-weekday-box > *:not(:last-child) {
+  height: 4.2rem;
+  border: grey;
+  border-right-style: solid;
+  border-width: 1px;
+}
+
+.calendar-weekday-box > * {
+  width: 3.3rem;
+}
+
+.calendar-weekday-title {
+  font-size: 1rem;
+}
+
+.calendar-weekday-date {
+  font-size: 1.5rem;
+}
+
+.calendar-weekday-notice {
+  width: 3px;
+  height: 3px;
+  background-color: #333;
+  border-radius: 50%;
+  margin: 0px auto 0 auto; /* center under title */
+
+}
+
+.calendar-date {
+  top: 5.5rem;
+  left: 1rem;
+  position: absolute;
+  color: black;
+}
+
+.calendar-today {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 7.5rem;
+  height: 6.5rem;
+  width: 100%;
+  gap: .5rem;
+}
+
+.calendar-today-event {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
+  background-color: rgb(206, 232, 248);
+  border-radius: 8px;
+  height: 2rem;
+  width: 20rem;
+  left: 2rem;
+}
+
+.calendar-event-title {
+  justify-content: left;
+}
+
+.calendar-event-time {
+  justify-content: right;
+}
+
+.calendar-upcoming-text {
+  position: absolute;
+  color: black;
+  bottom: 3rem;
+  left: 1rem;
+}
+
+.calendar-upcoming-events {
+  background-color: rgb(206, 232, 248);
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
+  border-radius: 8px;
+  gap: 8rem;
+  height: 2rem;
+  width: 20rem;
+  bottom: .6rem;
+  left: 2rem;
+}

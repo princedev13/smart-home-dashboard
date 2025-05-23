@@ -17,8 +17,8 @@ function NewsTile() {
       })
       .catch((error) => {
         console.error("error fetching news data");
-      }, []);
-  });
+      });
+  }, []);
 
   function setArticleData(newsData) {
     newsData.data;
