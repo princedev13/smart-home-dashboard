@@ -37,7 +37,7 @@ function DateTime() {
   return (
     <>
       <div className="date-time-tile">
-        <h1 className="time">{time}</h1>
+        <h1 className="time">{time.toUpperCase()}</h1>
         <h2 className="date">{date}</h2>
       </div>
     </>

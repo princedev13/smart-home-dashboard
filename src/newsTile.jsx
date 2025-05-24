@@ -4,7 +4,7 @@ const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_SECRET;
 function NewsTile() {
   const [newsData, setNewsData] = useState(null);
 
-  /*
+  
   useEffect(() => {
     fetch(
       "https://api.thenewsapi.com/v1/news/top?" +
@@ -23,7 +23,7 @@ function NewsTile() {
   function setArticleData(newsData) {
     newsData.data;
   }
-*/
+
 
   return (
     <>
