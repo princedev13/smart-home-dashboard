@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
-const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_SECRET;
 
 function WeatherTile() {
   const [weatherData, setWeatherData] = useState(null);
 
   useEffect(() => {
-    fetch(
-      "http://api.weatherapi.com/v1/current.json?key=" +
-        WEATHER_API_KEY +
-        "&q=Orlando"
-    )
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch("http://localhost:3002/api/weather");
+        const data = await res.json();
         setWeatherData(data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("error fetching weather data", error);
-      });
+      }
+    };
+
+    fetchWeather();
   }, []);
 
   return (
@@ -30,7 +28,9 @@ function WeatherTile() {
           <h4 className="weather-tile-temp">{weatherData.current.temp_f}°F</h4>
         </div>
       ) : (
-        <p>Loading...</p>
+        <div className="weather-tile">
+          <p>error</p>
+        </div>
       )}
     </div>
   );
