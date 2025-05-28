@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs").promises;
@@ -6,10 +6,9 @@ const path = require("path");
 const process = require("process");
 const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
-const { appsactivity } = require('googleapis/build/src/apis/appsactivity');
+const { appsactivity } = require("googleapis/build/src/apis/appsactivity");
 const WEATHER_API_KEY = process.env.VITE_WEATHER_API_SECRET;
 const NEWS_API_KEY = process.env.VITE_NEWS_API_SECRET;
-
 
 const app = express();
 app.use(cors());
@@ -19,10 +18,9 @@ const SCOPES = [
   "https://www.googleapis.com/auth/calendar.events",
 ];
 
-app
-  .listen(3002, () => {
-    console.log("Server listening on port 3002");
-  })
+app.listen(3002, () => {
+  console.log("Server listening on port 3002");
+});
 
 //gets path of token and credentials
 const TOKEN_PATH = path.join(process.cwd(), "token.json");
@@ -119,22 +117,40 @@ app.get("/api/calendar", async (req, res) => {
 
 app.get("/api/weather", async (req, res) => {
   try {
-    const response = await fetch("http://api.weatherapi.com/v1/current.json?key="+WEATHER_API_KEY+"&q=Orlando")
+    const response = await fetch(
+      "http://api.weatherapi.com/v1/current.json?key=" +
+        WEATHER_API_KEY +
+        "&q=Orlando"
+    );
     const responseJson = await response.json();
     res.json(responseJson);
-  } catch(err) {
-    console.error("Error fetching weather data", err)
+  } catch (err) {
+    console.error("Error fetching weather data", err);
   }
-})
+});
 
 app.get("/api/news", async (req, res) => {
-
   try {
-    const response = await fetch("https://api.thenewsapi.com/v1/news/top?"+NEWS_API_KEY +"&locale=us&limit=3")
+    const response = await fetch(
+      "https://api.thenewsapi.com/v1/news/top?" +
+        NEWS_API_KEY +
+        "&locale=us&limit=3"
+    );
     const responseJson = await response.json();
     res.json(responseJson);
-  } catch(err) {
-    console.error("Error fetching news data", err)
+  } catch (err) {
+    console.error("Error fetching news data", err);
+  }
+});
+
+app.get("/api/tempsensor", async (req, res) => {
+
+  try {
+    const response = await fetch("http://192.168.1.24:5000/api/tempsensor")
+    const responseJson = await response.json()
+    res.json(responseJson)
+  } catch (err) {
+    console.error("Error fetching temp sensor data", err);
   }
 
-})
+});
