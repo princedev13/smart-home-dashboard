@@ -4,6 +4,7 @@ function CalendarTile() {
   const [events, setEvents] = useState("");
 
   useEffect(() => {
+
     fetch("http://localhost:3002/api/calendar")
       .then((res) => res.json())
       .then((data) => {

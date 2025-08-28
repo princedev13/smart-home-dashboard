@@ -1,4 +1,8 @@
+import {useEffect, useState} from "react";
+
 function SpeakerTile() {
+  
+
   return (
     <>
       <div className="speaker-tile">
@@ -6,6 +10,8 @@ function SpeakerTile() {
       </div>
     </>
   );
+
+
 }
 
 export default SpeakerTile;

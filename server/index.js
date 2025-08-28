@@ -3,8 +3,8 @@ const cors = require("cors");
 const fs = require("fs").promises;
 const path = require("path");
 const process = require("process");
-const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
+const url = require('url');
 
 const app = express();
 app.use(cors());
@@ -23,47 +23,103 @@ app
 const TOKEN_PATH = path.join(process.cwd(), "token.json");
 const CREDENTIALS_PATH = path.join(process.cwd(), "credentials.json");
 
+async function getOAuthKeys() {
+  const content = await fs.readFile(CREDENTIALS_PATH);
+  const credentials = JSON.parse(content);
+  return credentials.web;
+}
+
+
 //reads previously authorized credentials from save file
 async function loadSavedCredentialsIfExist() {
+
   try {
-    const content = await fs.readFile(TOKEN_PATH);
-    const credentials = JSON.parse(content);
-    return google.auth.fromJSON(credentials);
+    const tokenContent = await fs.readFile(TOKEN_PATH);
+    const savedCredentials = JSON.parse(tokenContent);
+    return google.auth.fromJSON(savedCredentials);
   } catch (error) {
-    console.log(error);
+    console.error("Error reading token.json:", error);
+  }
+
+  //defines oauth client
+
+  try {
+    const keys = await getOAuthKeys();
+
+    const client = new google.auth.OAuth2(
+      keys.client_id,
+      keys.client_secret,
+      keys.redirect_uris[0]
+    );
+
+    return client;
+  } catch (error) {
+    console.error("Error loading credentials.json:", error);
+    return null;
   }
 }
 
 //translates credentials in a way thats compatible w/ GoogleAuth.fromJSON
-async function saveCredentials(client) {
-  const content = await fs.readFile(CREDENTIALS_PATH);
-  const keys = JSON.parse(content);
-  const key = keys.installed || keys.web;
+async function saveCredentials(client, tokens) {
+
+  const keys = await getOAuthKeys();
+
   const payload = JSON.stringify({
     type: "authorized_user",
-    client_id: key.client_id,
-    client_secret: key.client_secret,
-    refresh_token: client.credentials.refresh_token,
+    client_id: keys.client_id,
+    client_secret: keys.client_secret,
+    refresh_token: tokens.refresh_token,
   });
   await fs.writeFile(TOKEN_PATH, payload);
 }
 
-//load or request or authorization to call APIs
-async function authorize() {
-  let client = await loadSavedCredentialsIfExist();
-  if (client) {
-    return client;
-  }
-  client = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
+app.get("/api/auth", async (req, res) => {
+
+  const keys = await getOAuthKeys();
+
+  const client = await loadSavedCredentialsIfExist();
+  if (!client) return res.status(401).json({ error: "authorize failed" });
+
+  //Generate URL 
+  const authorizationUrl = client.generateAuthUrl({
+    access_type:'offline',
+    prompt: 'consent',
+    scope: SCOPES,
+    redirect_uri: keys.redirect_uris[0],
+    include_granted_scopes: true,
   });
-  if (client.credentials) {
-    await saveCredentials(client);
+
+  res.redirect(authorizationUrl);
+
+});
+
+// Recieve callback from google oauth2 server
+app.get("/api/oauth2callback", async (req, res) => {
+
+  const keys = await getOAuthKeys();
+
+  const client = await loadSavedCredentialsIfExist();
+  if (!client) return res.status(401).json({ error: "authorize failed" });
+
+  let q = url.parse(req.url, true).query;
+
+  if (q.error) {
+    console.log('Error:' + q.error)
+  } else {
+    //Get access and refresh tokens
+
+    let { tokens } = await client.getToken({
+      code: q.code,
+      redirect_uri: keys.redirect_uris[0]
+    });
+    
+    client.setCredentials(tokens);
+
+    await saveCredentials(client, tokens);
+    res.send("Authorization successful. Close Window");
   }
 
-  return client;
-}
+});
 
 // Gets 7 days of events from calendar
 
@@ -87,15 +143,16 @@ async function listEvents(auth) {
 }
 
 app.get("/api/calendar", async (req, res) => {
-  const auth = await authorize();
-  if (!auth) return res.status(401).json({ error: "authorize failed" });
+
+  const client = await loadSavedCredentialsIfExist();
+  if (!client) return res.status(401).json({ error: "authorize failed" });
 
   try {
-    const events = await listEvents(auth);
+    const events = await listEvents(client);
     res.json(events);
   } catch (error) {
     console.error("Error fetching events", error);
     res.status(500).json({ error: "Failed to fetch events" });
   }
-});
 
+});
