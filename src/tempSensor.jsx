@@ -19,7 +19,7 @@ function TempSensor() {
     fetchTempSensor();
 
     //set up interval
-    const interval = setInterval(fetchTempSensor, 3000);
+    const interval = setInterval(fetchTempSensor, 120000);
 
     //clean up interval when component unmounts
     return () => clearInterval(interval);

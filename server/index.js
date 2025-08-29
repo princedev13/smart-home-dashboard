@@ -17,6 +17,7 @@ const SCOPES = [
   "https://www.googleapis.com/auth/calendar.readonly",
   "https://www.googleapis.com/auth/calendar.events",
 ];
+
 const spotifyScope = "user-read-private user-read-email";
 const redirect_uri = "http://127.168.1.60:1734/callback";
 
@@ -133,7 +134,8 @@ async function listEvents(auth) {
   const calendar = google.calendar({ version: "v3", auth });
   const res = await calendar.events.list({
     calendarId: "primary",
-    timeMin: new Date().toISOString(),
+    timeMin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    timeMax: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
     maxResults: 15,
     singleEvents: true,
     orderBy: "startTime",
@@ -201,6 +203,7 @@ app.get("/api/tempsensor", async (req, res) => {
   }
 });
 
+/*
 async function spotifyAuthorize() {}
 
 app.get("/api/spotify/auth", async (req, res) => {
@@ -254,3 +257,4 @@ app.get("/callback", async function (req, res) {
     } catch (err) {}
   }
 });
+*/
