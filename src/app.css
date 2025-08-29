@@ -128,7 +128,7 @@ h4 {
   position: absolute;
   padding: 0;
   height: 15rem;
-  width: 24rem;
+  width: 28rem;
   margin-top: 0;
   border-radius: 16px;
   left: 1rem;
@@ -148,8 +148,8 @@ h4 {
 .date {
   position: absolute;
   font-size: 2rem;
-  width: 8rem;
-  left: 1.3rem;
+  width: 12rem;
+  left: 1rem;
   top: 4.8rem;
   margin: 0;
   padding: 0;

@@ -4,7 +4,11 @@ const fs = require("fs").promises;
 const path = require("path");
 const process = require("process");
 const { google } = require("googleapis");
-const url = require('url');
+const { appsactivity } = require("googleapis/build/src/apis/appsactivity");
+const WEATHER_API_KEY = process.env.VITE_WEATHER_API_SECRET;
+const NEWS_API_KEY = process.env.VITE_NEWS_API_SECRET;
+const SPOTIFY_API_KEY = process.env.VITE_SPOTIFY_API_SECRET;
+const SPOTIFY_CLIENT_ID = process.env.VITE_SPOTIFY_CLIENT_ID;
 
 const app = express();
 app.use(cors());
@@ -13,6 +17,8 @@ const SCOPES = [
   "https://www.googleapis.com/auth/calendar.readonly",
   "https://www.googleapis.com/auth/calendar.events",
 ];
+const spotifyScope = "user-read-private user-read-email";
+const redirect_uri = "http://127.168.1.60:1734/callback";
 
 app
   .listen(3002, () => {
@@ -155,4 +161,96 @@ app.get("/api/calendar", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch events" });
   }
 
+});
+
+app.get("/api/weather", async (req, res) => {
+  try {
+    const response = await fetch(
+      "http://api.weatherapi.com/v1/current.json?key=" +
+        WEATHER_API_KEY +
+        "&q=Orlando"
+    );
+    const responseJson = await response.json();
+    res.json(responseJson);
+  } catch (err) {
+    console.error("Error fetching weather data", err);
+  }
+});
+
+app.get("/api/news", async (req, res) => {
+  try {
+    const response = await fetch(
+      "https://api.thenewsapi.com/v1/news/top?" +
+        NEWS_API_KEY +
+        "&locale=us&limit=3"
+    );
+    const responseJson = await response.json();
+    res.json(responseJson);
+  } catch (err) {
+    console.error("Error fetching news data", err);
+  }
+});
+
+app.get("/api/tempsensor", async (req, res) => {
+  try {
+    const response = await fetch("http://192.168.1.24:5000/api/tempsensor");
+    const responseJson = await response.json();
+    res.json(responseJson);
+  } catch (err) {
+    console.error("Error fetching temp sensor data", err);
+  }
+});
+
+async function spotifyAuthorize() {}
+
+app.get("/api/spotify/auth", async (req, res) => {
+  let state = generateRandomString(16);
+
+  res.redirect(
+    "https://accounts.spotify.com/authorize?" +
+      querystring.stringify({
+        response_type: "code",
+        client_id: SPOTIFY_CLIENT_ID,
+        scope: spotifyScope,
+        redirect_uri: redirect_uri,
+        state: state,
+      })
+  );
+});
+
+app.get("/callback", async function (req, res) {
+  let code = req.query.code || null;
+  let state = req.query.state || null;
+
+  if (state === null) {
+    res.redirect(
+      "/#" +
+        querystring.stringify({
+          error: "state_mismatch",
+        })
+    );
+  } else {
+    try {
+      const authOptions = await fetch(
+        "https://accounts.spotify.com/api/token",
+        {
+          method: "POST",
+          form: {
+            code: code,
+            redirect_uri: redirect_uri,
+            grant_type: "authorization_code",
+          },
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            Authorization:
+              "Basic " +
+              new Buffer.from(
+                SPOTIFY_CLIENT_ID + ":" + SPOTIFY_API_KEY
+              ).toString("base64"),
+          },
+          json: true,
+        }
+      );
+    } catch (err) {}
+  }
 });
