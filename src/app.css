@@ -127,10 +127,10 @@ h4 {
 .calendar-weekdays {
   display: flex;
   position: absolute;
-  justify-content: space-between; 
-  margin-left: .5rem;
-  margin-right: .5rem;
-  margin-top: .5rem;
+  justify-content: space-between;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
   width: 22.55rem;
   height: 4rem;
 }
@@ -139,17 +139,27 @@ h4 {
   display: flex;
   flex-direction: column;
   background-color: #c1dff0;
+  padding-top: .5rem;
   width: 3rem;
   height: 4rem;
   border-radius: 10px;
 }
 
+.event-notice {
+  width: 8px;        
+  height: 8px;
+  background-color: lightgoldenrodyellow; 
+  border-radius: 50%;    
+  margin: 0 auto;   
+
+}
+
 .day-name {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
 }
 
 .day-number {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .calendar-events-box {
@@ -161,34 +171,35 @@ h4 {
 
 .calendar-date {
   position: absolute;
-  top: .2rem;
   left: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .calendar-todays-events {
   display: flex;
   flex-direction: column;
   position: absolute;
-  justify-content: space-between; 
-  margin-left: .5rem;
+  justify-content: space-between;
+  margin-left: 0.5rem;
   height: 4.5rem;
   width: 22.55rem;
-  /*border: 1px solid red;*/
-  top: 2.5rem;
+  top: 2rem;
 }
 
 .todays-event {
+  display: flex;
+  justify-content: space-between;
   background-color: #c1dff0;
+  padding-left: 1rem;
+  padding-right: 1rem;
   height: 2rem;
   border-radius: 10px;
 }
 
 .calendar-upcoming-events {
-  
   position: absolute;
-  justify-content: space-between; 
-  margin-left: .5rem;
+  justify-content: space-between;
+  margin-left: 0.5rem;
   height: 4.5rem;
   width: 22.55rem;
   /*border: 1px solid red;*/
@@ -197,18 +208,45 @@ h4 {
 
 .calendar-upcoming-events-text {
   position: absolute;
-  left: 1rem;
-  top: .2rem;
+  top: -.25rem;
+  left: 0.6rem;
+  font-size: 1.27rem;
 }
 
 .upcoming-event {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
   position: absolute;
   background-color: #c1dff0;
   height: 2rem;
-  width: 22.55rem;
+  width: 20.6rem;
   border-radius: 10px;
   top: 2rem;
-  
+}
+
+.day.selected {
+  border: 2px solid #2a6ef7;  /* highlight border */
+  background-color: #e3ecff;  /* subtle background */
+}
+
+.selected-no-events {
+  position: absolute;
+  font-size: 1.2rem;
+  color: #666;
+  top: 1rem;
+  left: 8.2rem;
+  margin-top: 0.5rem;
+}
+
+.upcoming-no-events {
+  position: absolute;
+  font-size: 1rem;
+  color: #666;
+  top: 1.3rem;
+  left: 7rem;
+  margin-top: 0.5rem;
 }
 
 .date-time-tile {
