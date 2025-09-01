@@ -95,9 +95,7 @@ function CalendarTile() {
       </div>
 
       <div className="calendar-events-box">
-        <div className="calendar-date">
-          {selectedDate.toDateString()}
-        </div>
+        <div className="calendar-date">{selectedDate.toDateString()}</div>
 
         <div className="calendar-todays-events">
           {todaysEvents.length > 0 ? (
@@ -120,9 +118,7 @@ function CalendarTile() {
         </div>
 
         <div className="calendar-upcoming-events">
-          <div className="calendar-upcoming-events-text">
-            Upcoming Events
-          </div>
+          <div className="calendar-upcoming-events-text">Upcoming Events</div>
           {upcomingEvent ? (
             <div className="upcoming-event">
               <div className="upcoming-event-title">

@@ -1,30 +1,41 @@
+require("dotenv").config();
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
 const fs = require("fs").promises;
 const path = require("path");
 const process = require("process");
 const { google } = require("googleapis");
-const { appsactivity } = require("googleapis/build/src/apis/appsactivity");
+const crypto = require("crypto");
 const WEATHER_API_KEY = process.env.VITE_WEATHER_API_SECRET;
 const NEWS_API_KEY = process.env.VITE_NEWS_API_SECRET;
 const SPOTIFY_API_KEY = process.env.VITE_SPOTIFY_API_SECRET;
 const SPOTIFY_CLIENT_ID = process.env.VITE_SPOTIFY_CLIENT_ID;
+const SPOTIFY_REDIRECT_URI = process.env.VITE_SPOTIFY_REDIRECT_URI;
+const SESSION_SECRET = process.env.VITE_SESSION_SECRET;
 
 const app = express();
+
 app.use(cors());
+app.use(
+  session({
+    secret: "SESSION_SECRET",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 const SCOPES = [
   "https://www.googleapis.com/auth/calendar.readonly",
   "https://www.googleapis.com/auth/calendar.events",
 ];
 
-const spotifyScope = "user-read-private user-read-email";
-const redirect_uri = "http://127.168.1.60:1734/callback";
+const spotifyScope =
+  "user-read-private user-read-email user-modify-playback-state user-read-playback-state user-read-currently-playing user-read-playback-position user-read-recently-played";
 
-app
-  .listen(3002, () => {
-    console.log("Server listening on port 3002");
-  })
+app.listen(3002, () => {
+  console.log("Server listening on port 3002");
+});
 
 //gets path of token and credentials
 const TOKEN_PATH = path.join(process.cwd(), "token.json");
@@ -36,10 +47,8 @@ async function getOAuthKeys() {
   return credentials.web;
 }
 
-
 //reads previously authorized credentials from save file
 async function loadSavedCredentialsIfExist() {
-
   try {
     const tokenContent = await fs.readFile(TOKEN_PATH);
     const savedCredentials = JSON.parse(tokenContent);
@@ -68,7 +77,6 @@ async function loadSavedCredentialsIfExist() {
 
 //translates credentials in a way thats compatible w/ GoogleAuth.fromJSON
 async function saveCredentials(client, tokens) {
-
   const keys = await getOAuthKeys();
 
   const payload = JSON.stringify({
@@ -81,28 +89,25 @@ async function saveCredentials(client, tokens) {
 }
 
 app.get("/api/auth", async (req, res) => {
-
   const keys = await getOAuthKeys();
 
   const client = await loadSavedCredentialsIfExist();
   if (!client) return res.status(401).json({ error: "authorize failed" });
 
-  //Generate URL 
+  //Generate URL
   const authorizationUrl = client.generateAuthUrl({
-    access_type:'offline',
-    prompt: 'consent',
+    access_type: "offline",
+    prompt: "consent",
     scope: SCOPES,
     redirect_uri: keys.redirect_uris[0],
     include_granted_scopes: true,
   });
 
   res.redirect(authorizationUrl);
-
 });
 
 // Recieve callback from google oauth2 server
 app.get("/api/oauth2callback", async (req, res) => {
-
   const keys = await getOAuthKeys();
 
   const client = await loadSavedCredentialsIfExist();
@@ -111,21 +116,20 @@ app.get("/api/oauth2callback", async (req, res) => {
   let q = url.parse(req.url, true).query;
 
   if (q.error) {
-    console.log('Error:' + q.error)
+    console.log("Error:" + q.error);
   } else {
     //Get access and refresh tokens
 
     let { tokens } = await client.getToken({
       code: q.code,
-      redirect_uri: keys.redirect_uris[0]
+      redirect_uri: keys.redirect_uris[0],
     });
-    
+
     client.setCredentials(tokens);
 
     await saveCredentials(client, tokens);
     res.send("Authorization successful. Close Window");
   }
-
 });
 
 // Gets 7 days of events from calendar
@@ -151,7 +155,6 @@ async function listEvents(auth) {
 }
 
 app.get("/api/calendar", async (req, res) => {
-
   const client = await loadSavedCredentialsIfExist();
   if (!client) return res.status(401).json({ error: "authorize failed" });
 
@@ -162,7 +165,6 @@ app.get("/api/calendar", async (req, res) => {
     console.error("Error fetching events", error);
     res.status(500).json({ error: "Failed to fetch events" });
   }
-
 });
 
 app.get("/api/weather", async (req, res) => {
@@ -203,58 +205,59 @@ app.get("/api/tempsensor", async (req, res) => {
   }
 });
 
-/*
-async function spotifyAuthorize() {}
-
 app.get("/api/spotify/auth", async (req, res) => {
-  let state = generateRandomString(16);
+  const state = crypto.randomBytes(16).toString("hex");
+  req.session.state = state;
+
+  const params = new URLSearchParams({
+    response_type: "code",
+    client_id: SPOTIFY_CLIENT_ID,
+    scope: spotifyScope,
+    redirect_uri: SPOTIFY_REDIRECT_URI,
+    state: state,
+  });
 
   res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: SPOTIFY_CLIENT_ID,
-        scope: spotifyScope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
+    "https://accounts.spotify.com/api/authorize?" + params.toString()
   );
 });
 
-app.get("/callback", async function (req, res) {
-  let code = req.query.code || null;
-  let state = req.query.state || null;
+app.get("/api/spotify/callback", async (req, res) => {
+  const code = req.query.code || null;
+  const state = req.query.state || null;
+  const paramsBody = new URLSearchParams({
+    code: code,
+    redirect_uri: SPOTIFY_REDIRECT_URI,
+    grant_type: "authorization_code",
+  });
+  const params = new URLSearchParams({
+    error: "state_mismatch",
+  });
 
-  if (state === null) {
-    res.redirect(
-      "/#" +
-        querystring.stringify({
-          error: "state_mismatch",
-        })
-    );
+  if (state !== req.session.state) {
+    res.redirect("/#" + params);
   } else {
     try {
-      const authOptions = await fetch(
-        "https://accounts.spotify.com/api/token",
-        {
-          method: "POST",
-          form: {
-            code: code,
-            redirect_uri: redirect_uri,
-            grant_type: "authorization_code",
-          },
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            Authorization:
-              "Basic " +
-              new Buffer.from(
-                SPOTIFY_CLIENT_ID + ":" + SPOTIFY_API_KEY
-              ).toString("base64"),
-          },
-          json: true,
-        }
-      );
-    } catch (err) {}
+      const response = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            Buffer.from(SPOTIFY_CLIENT_ID + ":" + SPOTIFY_API_KEY).toString(
+              "base64"
+            ),
+        },
+        body: paramsBody.toString(),
+      });
+
+      const data = await response.json();
+      console.log("Spotify token response:", data);
+
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching spotify auth token", error);
+      return res.status(500).json({ error: "Failed to exchange token" });
+    }
   }
 });
-*/
