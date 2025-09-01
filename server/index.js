@@ -7,19 +7,19 @@ const path = require("path");
 const process = require("process");
 const { google } = require("googleapis");
 const crypto = require("crypto");
-const WEATHER_API_KEY = process.env.VITE_WEATHER_API_SECRET;
-const NEWS_API_KEY = process.env.VITE_NEWS_API_SECRET;
-const SPOTIFY_API_KEY = process.env.VITE_SPOTIFY_API_SECRET;
-const SPOTIFY_CLIENT_ID = process.env.VITE_SPOTIFY_CLIENT_ID;
-const SPOTIFY_REDIRECT_URI = process.env.VITE_SPOTIFY_REDIRECT_URI;
-const SESSION_SECRET = process.env.VITE_SESSION_SECRET;
+const WEATHER_API_KEY = process.env.WEATHER_API_SECRET;
+const NEWS_API_KEY = process.env.NEWS_API_SECRET;
+const SPOTIFY_API_KEY = process.env.SPOTIFY_API_SECRET;
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
+
 
 const app = express();
 
 app.use(cors());
 app.use(
   session({
-    secret: "SESSION_SECRET",
+    secret: crypto.randomBytes(16).toString("hex"),
     resave: false,
     saveUninitialized: false,
   })
