@@ -98,6 +98,25 @@ h4 {
   background-color: #fff9fb;
   left: 1rem;
   top: 10rem;
+  color: #1db954; /* example: Spotify green */
+}
+
+.spotify-status {
+  position: absolute;
+  top: -4rem;
+}
+
+.connect-spotify-button {
+  border: red dotted;
+  height: 2rem;
+}
+
+.player-song-name {
+  color: #1db954;
+  border: red dotted;
+  position: absolute;
+  height: 3rem;
+  width: 10rem;
 }
 
 .tempsensor {
@@ -252,8 +271,8 @@ h4 {
 .date-time-tile {
   position: absolute;
   padding: 0;
-  height: 15rem;
-  width: 28rem;
+  height: 8rem;
+  width: 20rem;
   margin-top: 0;
   border-radius: 16px;
   left: 1rem;
@@ -273,8 +292,8 @@ h4 {
 .date {
   position: absolute;
   font-size: 2rem;
-  width: 12rem;
-  left: 1rem;
+  width: 17rem;
+  left: 0.3rem;
   top: 4.8rem;
   margin: 0;
   padding: 0;

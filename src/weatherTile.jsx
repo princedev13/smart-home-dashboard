@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_SECRET;
 
 function WeatherTile() {
   const [weatherData, setWeatherData] = useState(null);
 
   useEffect(() => {
-    fetch(
-      "http://api.weatherapi.com/v1/current.json?key=" +
-        WEATHER_API_KEY +
-        "&q=Orlando"
-    )
+    fetch("https://localhost:3002/api/weather")
       .then((response) => response.json())
       .then((data) => {
         setWeatherData(data);

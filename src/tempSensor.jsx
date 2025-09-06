@@ -4,25 +4,25 @@ function TempSensor() {
   const [sensorData, setSensorData] = useState(null);
 
   useEffect(() => {
-    const fetchTempSensor = async () => {
-      try {
-        const res = await fetch("http://localhost:3002/api/tempsensor");
-        const data = await res.json();
-        setSensorData(data);
-      } catch (err) {
-        console.error("error fetching sensor data", err);
-      }
+    // const fetchTempSensor = async () => {
+    //   try {
+    //     const res = await fetch("http://localhost:3002/api/tempsensor");
+    //     const data = await res.json();
+    //     setSensorData(data);
+    //   } catch (err) {
+    //     console.error("error fetching sensor data", err);
+    //   }
 
-    };
+    // };
 
-    //call temp sensor once immediately
-    fetchTempSensor();
+    // //call temp sensor once immediately
+    // fetchTempSensor();
 
-    //set up interval
-    const interval = setInterval(fetchTempSensor, 120000);
+    // //set up interval
+    // const interval = setInterval(fetchTempSensor, 120000);
 
-    //clean up interval when component unmounts
-    return () => clearInterval(interval);
+    // //clean up interval when component unmounts
+    // return () => clearInterval(interval);
 
   }, []);
 

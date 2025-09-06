@@ -3,17 +3,38 @@ import { useEffect, useState } from "react";
 function CalendarTile() {
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(true);
+  const [needsAuth, setNeedsAuth] = useState(false);
 
   const weekDaysArr = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
   useEffect(() => {
-    fetch("http://localhost:3002/api/calendar")
-      .then((res) => res.json())
+    setIsLoading(true);
+    fetch("https://localhost:3002/api/calendar", {
+      credentials: 'include' // Important for cookies/session
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          // Handle authentication error
+          return res.json().then(data => {
+            setNeedsAuth(true);
+            throw new Error(data.error);
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         console.log(data);
-        setEvents(data);
+        setEvents(data || []);
+        setNeedsAuth(false);
       })
-      .catch((err) => console.error("Error fetching events:", err));
+      .catch((err) => {
+        console.error("Error fetching events:", err);
+        if (err.message.includes("Not authenticated") || err.message.includes("expired")) {
+          setNeedsAuth(true);
+        }
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const today = new Date();
@@ -25,7 +46,7 @@ function CalendarTile() {
     return d;
   });
 
-  // 🔹 Find events for the currently selected day
+  // Find events for the currently selected day
   const todaysEvents = events.filter((event) => {
     if (event.start.date) {
       const [year, month, day] = event.start.date.split("-").map(Number);
@@ -44,7 +65,7 @@ function CalendarTile() {
     }
   });
 
-  // 🔹 Find the next upcoming event after the selected day
+  // Find the next upcoming event after the selected day
   const upcomingEvent = events
     .map((event) => {
       const eventDate = event.start.date || event.start.dateTime;
@@ -52,6 +73,51 @@ function CalendarTile() {
     })
     .filter((event) => event.dateObj > selectedDate)
     .sort((a, b) => a.dateObj - b.dateObj)[0];
+
+  // If authentication is needed, show auth prompt
+  if (needsAuth) {
+    return (
+      <div className="calendar-tile">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100%',
+          padding: '20px',
+          textAlign: 'center'
+        }}>
+          <h3>Google Calendar Authentication Required</h3>
+          <p style={{ margin: '10px 0' }}>Please authorize access to your Google Calendar</p>
+          <button 
+            onClick={() => window.location.href = 'https://localhost:3002/api/auth'}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#4285f4',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '16px'
+            }}
+          >
+            Connect Google Calendar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="calendar-tile">
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          Loading calendar events...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="calendar-tile">
