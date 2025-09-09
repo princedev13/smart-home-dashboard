@@ -9,6 +9,7 @@ const process = require("process");
 const { google } = require("googleapis");
 const crypto = require("crypto");
 const https = require("https");
+const { error } = require("console");
 const WEATHER_API_KEY = process.env.WEATHER_API_SECRET;
 const NEWS_API_KEY = process.env.NEWS_API_SECRET;
 const SPOTIFY_API_SECRET = process.env.SPOTIFY_API_SECRET;
@@ -26,8 +27,8 @@ app.use(
   cors({
     origin: "https://localhost:5173",
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -269,20 +270,20 @@ app.get("/api/tempsensor", async (req, res) => {
 
 app.get("/api/spotify/auth", async (req, res) => {
   console.log("Starting Spotify auth - Session ID:", req.sessionID);
-  
+
   const state = crypto.randomBytes(16).toString("hex");
   req.session.state = state;
-  
+
   // Force session save before redirect
   req.session.save((err) => {
     if (err) {
-      console.error('Session save error:', err);
-      return res.status(500).json({ error: 'Session error' });
+      console.error("Session save error:", err);
+      return res.status(500).json({ error: "Session error" });
     }
-    
+
     console.log("State saved to session:", state);
     console.log("Session after save:", req.session);
-    
+
     const params = new URLSearchParams({
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
@@ -298,18 +299,18 @@ app.get("/api/spotify/auth", async (req, res) => {
 app.get("/api/spotify/callback", async (req, res) => {
   console.log("Spotify callback - Session ID:", req.sessionID);
   console.log("Session data:", req.session);
-  
+
   const code = req.query.code || null;
   const state = req.query.state || null;
-  
+
   console.log("Received state:", state);
   console.log("Session state:", req.session.state);
-  
+
   if (!req.session.state) {
     console.error("No state in session");
     return res.status(400).send("Session error - no state found");
   }
-  
+
   if (state !== req.session.state) {
     console.error("State mismatch");
     const params = new URLSearchParams({
@@ -317,10 +318,10 @@ app.get("/api/spotify/callback", async (req, res) => {
     });
     return res.redirect("https://localhost:5173/#" + params.toString());
   }
-  
+
   // Clear the state after validation
   delete req.session.state;
-  
+
   const paramsBody = new URLSearchParams({
     code: code,
     redirect_uri: SPOTIFY_REDIRECT_URI,
@@ -342,10 +343,12 @@ app.get("/api/spotify/callback", async (req, res) => {
     });
 
     const data = await response.json();
-    
+
     if (data.error) {
       console.error("Spotify token error:", data);
-      return res.status(400).json({ error: data.error_description || data.error });
+      return res
+        .status(400)
+        .json({ error: data.error_description || data.error });
     }
 
     req.session.spotifyAuth = {
@@ -358,17 +361,16 @@ app.get("/api/spotify/callback", async (req, res) => {
     // Force session save before redirect
     req.session.save((err) => {
       if (err) {
-        console.error('Session save error:', err);
-        return res.status(500).json({ error: 'Session save error' });
+        console.error("Session save error:", err);
+        return res.status(500).json({ error: "Session save error" });
       }
-      
+
       console.log("Spotify token stored successfully");
       console.log("Session ID after save:", req.sessionID);
       console.log("Session data after save:", req.session.spotifyAuth);
-      
+
       res.redirect("https://localhost:5173");
     });
-    
   } catch (error) {
     console.error("Error fetching spotify auth token", error);
     return res.status(500).json({ error: "Failed to exchange token" });
@@ -383,8 +385,11 @@ app.get("/api/spotify/status", async (req, res) => {
   if (req.session.spotifyAuth && req.session.spotifyAuth.expires_at) {
     const spotifyAuthExpireCheck =
       Date.now() < req.session.spotifyAuth.expires_at;
-    console.log("Token expires at:", new Date(req.session.spotifyAuth.expires_at))
-    console.log("is the token valid?", spotifyAuthExpireCheck)
+    console.log(
+      "Token expires at:",
+      new Date(req.session.spotifyAuth.expires_at)
+    );
+    console.log("is the token valid?", spotifyAuthExpireCheck);
 
     if (spotifyAuthExpireCheck) {
       return res.json({ authenticated: true });
@@ -412,5 +417,124 @@ app.get("/api/spotify/getCurrentTrack", async (req, res) => {
     console.log(data);
   } catch (error) {
     console.error(error);
+  }
+});
+
+app.put("/api/spotify/pausePlayback", async (req, res) => {
+  const spotifyAuth = req.session.spotifyAuth.access_token;
+
+  try {
+    const response = await fetch("https://api.spotify.com/v1/me/player/pause", {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + spotifyAuth,
+      },
+    });
+
+    // Spotify returns 204 No Content for successful play/pause requests
+    if (response.status === 204 || response.status === 200) {
+      res.status(200).json({ message: "Pause request sent" });
+    } else {
+      throw new Error(`Spotify API returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error pausing track:", error);
+    res.status(500).json({ error: "Failed to pause track" });
+  }
+});
+
+app.put("/api/spotify/playPlayback", async (req, res) => {
+  let spotifyAuth = req.session.spotifyAuth.access_token;
+
+  try {
+    const response = await fetch("https://api.spotify.com/v1/me/player/play", {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + spotifyAuth,
+      },
+    });
+
+    // Spotify returns 204 No Content for successful play/pause requests
+    if (response.status === 204 || response.status === 200) {
+      res.status(200).json({ message: "Play request sent" });
+    } else {
+      throw new Error(`Spotify API returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error playing track:", error);
+    res.status(500).json({ error: "Failed to play track" });
+  }
+});
+
+app.post("/api/spotify/skipToNext", async (req, res) => {
+  const spotifyAuth = req.session.spotifyAuth.access_token;
+
+  try {
+    const response = await fetch("https://api.spotify.com/v1/me/player/next", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + spotifyAuth,
+      },
+    });
+
+    if (response.status === 204 || response.status === 200) {
+      res.status(200).json({ message: "Play request sent" });
+    } else {
+      throw new Error(`Spotify API returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error playing track:", error);
+    res.status(500).json({ error: "Failed to play track" });
+  }
+});
+
+app.post("/api/spotify/skipToPrevious", async (req, res) => {
+  const spotifyAuth = req.session.spotifyAuth.access_token;
+
+  try {
+    const response = await fetch(
+      "https://api.spotify.com/v1/me/player/previous",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + spotifyAuth,
+        },
+      }
+    );
+
+    if (response.status === 204 || response.status === 200) {
+      res.status(200).json({ message: "Play request sent" });
+    } else {
+      throw new Error(`Spotify API returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error previous track:", error);
+    res.status(500).json({ error: "Failed to play track" });
+  }
+});
+
+app.put("/api/spotify/toggleShuffle", async (req, res) => {
+  const spotifyAuth = req.session.spotifyAuth.access_token;
+  const { state } = req.query;
+
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/me/player/shuffle?state=${state}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + spotifyAuth,
+        },
+      }
+    );
+
+    if (response.status === 204 || response.status === 200) {
+      res.status(200).json({ message: "Play request sent" });
+    } else {
+      throw new Error(`Spotify API returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error toggling shuffle:", error);
+    res.status(500).json({ error: "Failed to play track" });
   }
 });

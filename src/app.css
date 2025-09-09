@@ -91,19 +91,19 @@ h4 {
 .speaker-tile {
   position: absolute;
   padding: 0;
-  height: 6rem;
+  height: 7rem;
   width: 22rem;
   margin-top: 0;
   border-radius: 16px;
   background-color: #fff9fb;
   left: 1rem;
-  top: 10rem;
+  top: 9rem;
   color: #1db954; /* example: Spotify green */
 }
 
 .spotify-status {
   position: absolute;
-  top: -4rem;
+  top: 10rem;
 }
 
 .connect-spotify-button {
@@ -111,12 +111,121 @@ h4 {
   height: 2rem;
 }
 
-.player-song-name {
-  color: #1db954;
-  border: red dotted;
+.player-img {
   position: absolute;
-  height: 3rem;
-  width: 10rem;
+  border-radius: 8px;
+  left: .5rem;
+  top: .7rem;
+  height: 5.5rem;
+  width: 5.5rem;
+  border: black solid
+}
+
+.player-song-name {
+  position: absolute;
+  top: .5rem;
+  left: 7rem;
+  overflow-x:hidden;
+  text-align: left;
+  color: #1db954;
+  position: absolute;
+  height: 1.6rem;
+  width: 17rem;
+}
+
+.player-song-artist {
+  color: #1db954;
+  position: absolute;
+  text-align: left;
+  top: 1.7rem;
+  left: 7rem;
+  height: 2rem;
+  width: 17rem;
+}
+
+.player {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 4.8rem;
+  left: 8.2rem;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.player-shuffle-button {
+  background: none;   
+  border: none;       
+  padding: 0;         
+  margin: 0;          
+  font-size: 1.5rem; 
+  cursor: pointer;    
+}
+
+.player-prev-button {
+  background: none;   
+  border: none;       
+  padding: 0;         
+  margin: 0;          
+  font-size: 1.5rem; 
+  cursor: pointer;    
+}
+
+.player-pause-button {
+  background: none;  
+  border: none;       
+  padding: 0;        
+  margin: 0;         
+  font-size: 1.5rem; 
+  cursor: pointer;    
+}
+
+.player-forward-button {
+  background: none;   
+  border: none;      
+  padding: 0;         
+  margin: 0;         
+  font-size: 1.5rem;  
+  cursor: pointer;    
+}
+
+.player-repeat-button {
+  background: none;   
+  border: none;       
+  padding: 0;         
+  margin: 0;          
+  font-size: 1.5rem; 
+  cursor: pointer;    
+}
+
+.player-time {
+  position: absolute;
+  -webkit-appearance: none; 
+  appearance: none;
+  width: 14rem;
+  height: 1rem;
+  top: 2.5rem;
+  left: 5.7rem;
+  background: none; 
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.player-elapsed-time {
+  position: absolute;
+  top: -.5rem;
+  left: -1.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.player-remaining-time {
+  position: absolute;
+  top: -.5rem;
+  left: 11.7rem;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .tempsensor {
